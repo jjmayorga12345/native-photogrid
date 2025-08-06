@@ -1,31 +1,46 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
-import PhotoGallery from './components/PhotoGallery';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import PhotoGalleryScreen from './screens/PhotoGalleryScreen';
+import PhotoDetailScreen from './screens/PhotoDetailScreen';
+import PhotoModalScreen from './screens/PhotoModalScreen';
 
-export interface ImageData {
-  id: string;
-  url: string;
-}
+export type StackParamList = {
+  PhotoGallery: undefined;
+  PhotoDetail: { id: number; url: string };
+  PhotoModal: { url: string };
+};
 
-const imageData: ImageData[] = [];
-for (let i = 1; i <= 70; i++) {
-  imageData.push({
-    id: i.toString(),
-    url: `https://picsum.photos/id/${i}/200`,
-  });
-}
+const Stack = createStackNavigator<StackParamList>();
 
 export default function App() {
   return (
-    <SafeAreaView style={styles.container}>
-      <PhotoGallery photos={imageData} />
-    </SafeAreaView>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="PhotoGallery"
+          component={PhotoGalleryScreen}
+          options={{ title: 'Photo Gallery' }}
+        />
+        <Stack.Screen
+          name="PhotoDetail"
+          component={PhotoDetailScreen}
+          options={({ route }) => ({
+            headerTitle: route.params.url,
+          })}
+        />
+        <Stack.Screen
+          name="PhotoModal"
+          component={PhotoModalScreen}
+          options={{
+            presentation: 'modal',
+            headerStyle: { backgroundColor: 'black' },
+            headerTintColor: 'white',
+            headerShadowVisible: false,
+            headerTitle: '',
+          }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-});
